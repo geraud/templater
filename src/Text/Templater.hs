@@ -10,17 +10,22 @@ import           Data.Text            (Text)
 import qualified Data.Text            as T
 import           Prelude              hiding (takeWhile)
 
+data TemplateItem
+    = Literal Text
+    | Variable Text
+    deriving (Show, Eq)
+
 type Context = Text -> Maybe Text
 
 template :: Text -> Context -> Either String Text
 template "" _  = Right ""
 template st ctx = case parseOnly templateP st of
-                  Right items -> templateItems items ctx
+                  Right items -> expandItems ctx items
                   Left e -> Left e
 
-templateItems :: [TemplateItem] -> Context -> Either String Text
-templateItems items context =
-    let (lefts,rights) = partitionEithers $ expandItem context <$> items
+expandItems :: Context -> [TemplateItem] -> Either String Text
+expandItems context items =
+    let (lefts, rights) = partitionEithers $ expandItem context <$> items
     in if null lefts
        then Right $ T.concat rights
        else Left $ intercalate ", " lefts
@@ -31,11 +36,6 @@ expandItem ctx (Variable name) =
     case ctx name of
     Nothing -> Left $ "key '" <> T.unpack name <> "' not found in context"
     Just v  -> Right v
-
-data TemplateItem
-    = Literal Text
-    | Variable Text
-    deriving (Show, Eq)
 
 templateP :: Parser  [TemplateItem]
 templateP = many1 templateItemP <* endOfInput
