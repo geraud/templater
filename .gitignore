@@ -1,0 +1,6 @@
+*.tix
+/.cabal-sandbox/
+/.hpc/
+/cabal.sandbox.config
+/dist/
+cabal.config
