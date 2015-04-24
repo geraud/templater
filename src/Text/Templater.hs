@@ -11,7 +11,6 @@ import qualified Data.Text            as T
 import           Prelude              hiding (takeWhile)
 
 type Context = Text -> Maybe Text
-type TemplatingError = Text
 
 template :: Text -> Context -> Either String Text
 template "" _  = Right ""
