@@ -1,4 +1,5 @@
 # Templater
+[![Build Status](https://travis-ci.org/geraud/templater.svg?branch=master)](https://travis-ci.org/geraud/templater)
 
 Simple string templater
 
